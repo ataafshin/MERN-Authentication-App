@@ -15,6 +15,11 @@ mongoose.connect('mongodb://localhost:27017/mern-auth-app', { useNewUrlParser: t
 
 const secret = 'your_jwt_secret';  // Secret key for JWT
 
+// Root Route
+app.get('/', (req, res) => {
+    res.send('Welcome to the MERN Authentication App');
+});
+
 // Endpoint to register a new user
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
@@ -49,6 +54,7 @@ app.get('/profile', async (req, res) => {
 });
 
 // Start the server
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
+const port = process.env.PORT || 3000;  // Set your desired port
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
