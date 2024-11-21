@@ -5,30 +5,46 @@ const App = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [token, setToken] = useState('');
+    const [message, setMessage] = useState('');
 
-    // Function to handle user registration
     const register = async () => {
-        const response = await axios.post('http://localhost:3000/register', { username, password });
-        console.log(response.data);  // Log the registered user data
+        try {
+            const response = await axios.post('http://localhost:3000/register', { username, password });
+            setMessage('Registration successful! You can now log in.');
+            console.log(response.data);
+        } catch (error) {
+            setMessage('Error during registration. Please try again.');
+            console.error(error);
+        }
     };
 
-    // Function to handle user login
     const login = async () => {
-        const response = await axios.post('http://localhost:3000/login', { username, password });
-        setToken(response.data.token);  // Store the JWT token
-        console.log(response.data);  // Log the login response
+        try {
+            const response = await axios.post('http://localhost:3000/login', { username, password });
+            setToken(response.data.token);
+            setMessage('Login successful!');
+            console.log(response.data);
+        } catch (error) {
+            setMessage('Invalid username or password. Please try again.');
+            console.error(error);
+        }
     };
 
-    // Function to fetch user profile
     const getProfile = async () => {
-        const response = await axios.get('http://localhost:3000/profile', {
-            headers: { Authorization: token }  // Set the Authorization header
-        });
-        console.log(response.data);  // Log the user profile data
+        try {
+            const response = await axios.get('http://localhost:3000/profile', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setMessage('Profile fetched successfully!');
+            console.log(response.data);
+        } catch (error) {
+            setMessage('Error fetching profile. Please log in again.');
+            console.error(error);
+        }
     };
 
     return (
-        <div>
+        <div className="container">
             <h1>User Authentication</h1>
             <input
                 type="text"
@@ -42,9 +58,12 @@ const App = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            <button onClick={register}>Register</button>
-            <button onClick={login}>Login</button>
-            <button onClick={getProfile}>Get Profile</button>
+            <div className="buttons">
+                <button onClick={register}>Register</button>
+                <button onClick={login}>Login</button>
+                <button onClick={getProfile}>Get Profile</button>
+            </div>
+            {message && <p className="message">{message}</p>}
         </div>
     );
 };
